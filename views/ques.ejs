@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .container {
+            margin: 4% 8%;
+            z-index: -1;
+            border: 2px solid black;
+            justify-self: center;
+            text-align: center;
+            border-radius: 10%;
+            background-color: #F08080;
+        }
+        
+        .header {
+            font-size: 20px;
+        }
+        
+        .question {
+            padding: 1%;
+            justify-self: center;
+            text-align: center;
+            font-size: 25px;
+            background-color: beige;
+        }
+        
+        .li {
+            margin: 20px;
+            padding: 2px;
+            font-size: 25px;
+            border-radius: 10px;
+            background-color: rgb(210, 235, 143);
+        }
+        
+        button {
+            padding: 10px;
+            font-size: 25px;
+            margin: 1%;
+            border-radius: 10%;
+        }
+        
+        .selected {
+            background-color: lightgray;
+            margin: 20px;
+            padding: 2px;
+            font-size: 25px;
+            border-radius: 10px;
+        }
+        
+        .correctAns {
+            background-color: green;
+            margin: 20px;
+            padding: 2px;
+            font-size: 25px;
+            border-radius: 10px;
+        }
+        
+        .wrongAns {
+            background-color: red;
+            margin: 20px;
+            padding: 2px;
+            font-size: 25px;
+            border-radius: 10px;
+        }
+        
+        p {
+            margin-left: 85%;
+            font-size: 30px;
+        }
+        
+        a {
+            font-size: 50px;
+            margin-left: 75%;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+
+
+    <title>Quiz</title>
+</head>
+
+<body>
+    <a href="http://localhost:3000/his ">Show History</a>
+    <div class="container">
+        <div class="header">
+            <h1>Quiz Time</h2>
+                <h2>Score : <strong id="score">0</strong></h3>
+        </div>
+
+        <span class="question">What is your Name?</span>
+        <ol id="option">
+            <li class="li" onclick="optionSelect(this)">Annu</li>
+            <li class="li" onclick="optionSelect(this)">Polly</li>
+            <li class="li" onclick="optionSelect(this)">Isha</li>
+            <li class="li" onclick="optionSelect(this)">Mummy</li>
+        </ol>
+        <button id="submit">Submit</button>
+    </div>
+
+
+
+
+</body>
+<script>
+    let quesNo = 0
+    let score = 0
+    let selectedOption = ""
+    let correctAnsCount = 0
+    const question = document.querySelector('.question')
+    let options = document.querySelectorAll(".li")
+    const submit = document.getElementById('submit');
+
+    const myQuestions = [{
+
+        question: 'Who is the best cricketer in the world?',
+        answers: {
+            0: 'Sachin Tendulkar',
+            1: ' Virat Kolli',
+            2: 'Adam GilchirstS',
+            3: 'Jacques Kallis',
+        },
+        correctAnswer: 'Sachin Tendulkar',
+    }, {
+        question: 'What are the colors in the Indian national flag',
+        answers: {
+            0: 'GREEN',
+            1: 'YELLOW',
+            2: 'WHITE',
+            3: 'ORANGE',
+        },
+        correctAnswer: 'GREEN',
+    }]
+
+    nextQuestions(quesNo)
+
+    function nextQuestions(quesNo) {
+        getQuestions(myQuestions[quesNo])
+        getOptions(myQuestions[quesNo])
+    }
+
+    function getQuestions(currentQues) {
+        question.innerText = currentQues.question
+    }
+
+    function getOptions(currentQues) {
+        for (i in options) {
+            options[i].innerHTML = currentQues.answers[i]
+        }
+    }
+
+    function optionSelect(t) {
+        selectedOption = t
+        selectedOption.classList.toggle('selected')
+
+    }
+
+    submit.addEventListener('click', (e) => {
+        let correctAnswer = myQuestions[quesNo].correctAnswer
+        let choosenAnswer = selectedOption.innerText
+
+        if (choosenAnswer == correctAnswer) {
+            selectedOption.classList.toggle('correctAns')
+
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Congrugaltion! \n Your Answer is Corret...!',
+                text: 'You scored 5 points.',
+                showConfirmButton: true,
+                confirmButtonText: '<i class="fa fa-right"></i> Next  ',
+                showCancelButton: true,
+            })
+
+            choosenAnswer = ''
+            score = score + 5
+            document.getElementById("score").innerText = score
+            correctAnsCount++
+
+            selectedOption.setAttribute('class', 'li')
+            selectedOption.classList.remove('correctAns')
+        } else {
+            selectedOption.classList.toggle('wrongAns')
+            Swal.fire({
+                icon: 'error',
+                title: `Sorry, Answer is Wrong \n You didn't Score anything!`,
+                confirmButtonText: '<i class="fa fa-thumbs-up"></i> Next!',
+                timer: 5000,
+            })
+
+            selectedOption.classList.remove('wrongAns')
+        }
+        selectedOption.classList.remove('selected')
+        quesNo++
+        choosenAnswer = ''
+        correctAnswer = ''
+        selectedElement = ''
+        if (quesNo === myQuestions.length) {
+
+
+            Swal.fire({
+                title: 'Your Quiz Score : ' + score + ' points.' + '\n' + 'Correct Answer ' + correctAnsCount + '/' + myQuestions.length,
+                text: ' Great!',
+                imageWidth: 400,
+                imageHeight: 200,
+                imageUrl: 'https://clipground.com/images/img-http-forum-kde-org-content-bcooksley_sig-clipart-img-5.jpg',
+                imageAlt: 'Custom image',
+                confirmButtonText: 'Try Again!'
+            }).then(() => {
+                window.location.href = window.location.href;
+
+            })
+        } else {
+            nextQuestions(quesNo)
+
+        }
+
+    })
+
+    function getEventTarget(e) {
+        e = e || window.event
+        return e.target || e.srcElement
+    }
+</script>
+
+</html>
